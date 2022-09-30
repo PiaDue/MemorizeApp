@@ -9,18 +9,22 @@ import SwiftUI
 
 struct ContentView: View { //behaves like a view
     var emojis:[String] = ["🚗", "🚂", "🚁", "🚜", "🚕", "🏎", "🚑", "🚓", "🚒", "✈️", "🚀", "⛵️", "🛸", "🛶", "🚌", "🏍", "🛺", "🚠", "🛵", "🚲", "🚚", "🚆", "🛴", "🛻"]
-    @State var emojiCount: Int = 4 //saved in memory
+    @State var emojiCount: Int = 8 //saved in memory
     
     var body: some View { //body view
         VStack{
-            
-            HStack{ //horizontal Stack of cards
-                ForEach(emojis[0..<emojiCount], id: \.self, content: { emoji in //parameter
-                    CardView(content: emoji)//initial value for that card specifically
-                })
+            ScrollView{
+                LazyVGrid(columns: [GridItem(.adaptive(minimum: 65))]){ //Grid of Cards
+                    ForEach(emojis[0..<emojiCount], id: \.self, content: { emoji in //parameter
+                        CardView(content: emoji)//initial value for that card specifically
+                            .aspectRatio(2/3, contentMode:.fit)
+                    })
+                }
+                .padding()
+                .foregroundColor(.red)
             }
-            .padding()
-            .foregroundColor(.red)
+            
+            Spacer()
             
             HStack{
                 addCard
@@ -55,11 +59,11 @@ struct ContentView: View { //behaves like a view
 
 struct CardView: View{
     var content: String
-    @State var isFaceUp: Bool = false //points to property in memory
+    @State var isFaceUp: Bool = true //points to property in memory
     
     var body: some View{
         ZStack{
-            let shape = RoundedRectangle(cornerRadius: 25) //local constant, no need to specify the type
+            let shape = RoundedRectangle(cornerRadius: 23) //local constant, no need to specify the type
             
             if isFaceUp {
                 shape.fill().foregroundColor(.white)
@@ -94,5 +98,6 @@ struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
         ContentView()
             .preferredColorScheme(.light)
+            .previewInterfaceOrientation(.portrait)
     }
 }
