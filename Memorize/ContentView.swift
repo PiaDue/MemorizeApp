@@ -23,37 +23,7 @@ struct ContentView: View { //behaves like a view
                 .padding()
                 .foregroundColor(.red)
             }
-            
-            Spacer()
-            
-            HStack{
-                addCard
-                Spacer()
-                removeCard
-            }
-            .padding(.horizontal)
-            .font(.largeTitle)
-            
         }
-        
-    }
-    
-    var addCard: some View{
-        Button(action: {
-            if(emojiCount<emojis.count){emojiCount+=1}
-        }, label: {
-            Image(systemName: "plus.circle")
-            
-        })
-    }
-    
-    var removeCard: some View{
-        Button(action: {
-            if(emojiCount>1){emojiCount-=1}
-        }, label: {
-            Image(systemName: "minus.circle")
-            
-        })
     }
 }
 
