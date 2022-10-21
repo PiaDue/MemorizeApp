@@ -9,10 +9,21 @@ import Foundation
 
 struct MemoryGame<CardContent> where CardContent: Equatable{ //enables ==
     private(set) var cards: Array<Card>
-    private var indexOfFaceUpCard: Int?
+    private var indexOfFaceUpCard: Int? {
+        get{
+            let faceUpCardIndicies = cards.indices.filter({cards[$0].isFaceUp}) //array of all faceUpCards
+            return faceUpCardIndicies.oneAndOnly //look at arry extension
+        }
+        set{
+            cards.indices.forEach({ index in
+                cards[index].isFaceUp = (index == newValue)
+            })
+        }
+        
+    }
     
     init(numberOfPairsOfCards: Int, createCardContent: (Int) -> CardContent){
-        cards = Array<Card>()
+        cards = []
         for pairIndex in 0..<numberOfPairsOfCards {
             let content: CardContent = createCardContent(pairIndex)
             cards.append(Card(id: pairIndex*2, content: content))
@@ -22,8 +33,8 @@ struct MemoryGame<CardContent> where CardContent: Equatable{ //enables ==
     
     mutating func choose(_ card: Card){ //mutating because it changes the models data
         if let chosenIndex = cards.firstIndex(where: {$0.id == card.id}),//$0 stands for first parameter
-            !cards[chosenIndex].isFaceUp,
-            !cards[chosenIndex].isMatched
+           !cards[chosenIndex].isFaceUp,
+           !cards[chosenIndex].isMatched
         {
             if let potentialMatchIndex = indexOfFaceUpCard {
                 if cards[chosenIndex].content == cards[potentialMatchIndex].content {
@@ -32,24 +43,30 @@ struct MemoryGame<CardContent> where CardContent: Equatable{ //enables ==
                     cards[potentialMatchIndex].isMatched = true
                     //put cards out of game
                 }
-                indexOfFaceUpCard = nil
+                cards[chosenIndex].isFaceUp = true
             }else{
-                for index in cards.indices{
-                    cards[index].isFaceUp = false
-                }
                 indexOfFaceUpCard = chosenIndex
             }
-            //turn chosen card face-up
-            cards[chosenIndex].isFaceUp.toggle()
+            
         }
-        
     }
     
     struct Card: Identifiable {
-        var id: Int
+        let id: Int
+        var isFaceUp = false
+        var isMatched = false
+        let content: CardContent
+    }
+}
+
+
+extension Array { //is now part of the Array struct
+    var oneAndOnly: Element? {
+        if self.count == 1 {
+            return self.first
+        }else{
+            return nil
+        }
         
-        var isFaceUp: Bool = false
-        var isMatched: Bool = false
-        var content: CardContent
     }
 }
