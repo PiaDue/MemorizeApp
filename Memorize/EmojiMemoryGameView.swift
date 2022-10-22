@@ -31,21 +31,33 @@ struct CardView: View{
     let card: EmojiMemoryGame.Card
     
     var body: some View{
-        ZStack{
-            let shape = RoundedRectangle(cornerRadius: 23) //local constant, no need to specify the type
-            
-            if card.isFaceUp {
-                shape.fill().foregroundColor(.white)
-                shape.stroke(lineWidth: 4)
-                Text(card.content).font(.largeTitle)
-            }else if card.isMatched{
-                shape.opacity(0)
-            } else {
-                shape.fill()
+        GeometryReader(content: { geometry in
+            ZStack{
+                let shape = RoundedRectangle(cornerRadius: ViewConstants.cornerRadius) //local constant, no need to specify the type
+                
+                if card.isFaceUp {
+                    shape.fill().foregroundColor(.white)
+                    shape.strokeBorder(lineWidth: ViewConstants.lineWidth)
+                    Text(card.content).font(font(in: geometry.size)) //adapts the emoji size to the size of the card
+                }else if card.isMatched{
+                    shape.opacity(0)
+                } else {
+                    shape.fill()
+                }
             }
             
-            
-        }
+        })
+    }
+    
+    private func font(in size: CGSize) -> Font {
+        return Font.system(size: min(size.width, size.height) * ViewConstants.fontScale)
+    }
+    
+    // make constants in the code more readale + gathers them at one pace
+    private struct ViewConstants {
+        static let cornerRadius: CGFloat = 23
+        static let lineWidth: CGFloat = 4
+        static let fontScale: CGFloat = 0.75
     }
 }
 
