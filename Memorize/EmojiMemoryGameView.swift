@@ -42,6 +42,9 @@ struct CardView: View{
                 if card.isFaceUp {
                     shape.fill().foregroundColor(.white)
                     shape.strokeBorder(lineWidth: ViewConstants.lineWidth)
+                    Pie(startAngle: Angle(degrees: -90), endAngle: Angle(degrees: 110-90))
+                        .padding(ViewConstants.timerPadding)
+                        .opacity(ViewConstants.timerOpacity)
                     Text(card.content).font(font(in: geometry.size)) //adapts the emoji size to the size of the card
                 }else if card.isMatched{
                     shape.opacity(0)
@@ -60,7 +63,9 @@ struct CardView: View{
     private struct ViewConstants {
         static let cornerRadius: CGFloat = 10
         static let lineWidth: CGFloat = 4
-        static let fontScale: CGFloat = 0.75
+        static let fontScale: CGFloat = 0.65
+        static let timerPadding: CGFloat = 5.5
+        static let timerOpacity: Double = 0.5
     }
 }
 
@@ -77,7 +82,8 @@ struct CardView: View{
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
         let game = EmojiMemoryGame()
-        EmojiMemoryGameView(game: game)
+        game.choose(game.cards.first!) //just for testing
+        return EmojiMemoryGameView(game: game)
             .preferredColorScheme(.light)
             .previewInterfaceOrientation(.portrait)
     }
