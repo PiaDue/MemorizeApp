@@ -11,18 +11,23 @@ struct EmojiMemoryGameView: View { //behaves like a view
     @ObservedObject var game: EmojiMemoryGame //rebuilds when vm pronounces changes
     
     var body: some View { //body view
-        ScrollView{
-            LazyVGrid(columns: [GridItem(.adaptive(minimum: 65))]){ //Grid of Cards
-                ForEach(game.cards, content: { card in //parameter
-                    CardView(card: card)//initial value for that card specifically
-                        .aspectRatio(2/3, contentMode:.fit)
-                        .onTapGesture {
-                            game.choose(card)
-                        }
-                })
+        AspectVGrid(items: game.cards, aspectRatio: 2/3, content:{ card in
+            cardView(for: card)
+        })
+        .padding()
+        .foregroundColor(.red)
+    }
+    
+    @ViewBuilder
+    private func cardView (for card: EmojiMemoryGame.Card) -> some View {
+        if card.isMatched && !card.isFaceUp {
+            Rectangle().opacity(0)
+        } else {
+            CardView(card: card)//initial value for that card specifically
+            .padding(4)
+            .onTapGesture {
+                game.choose(card)
             }
-            .padding()
-            .foregroundColor(.red)
         }
     }
 }
@@ -33,8 +38,7 @@ struct CardView: View{
     var body: some View{
         GeometryReader(content: { geometry in
             ZStack{
-                let shape = RoundedRectangle(cornerRadius: ViewConstants.cornerRadius) //local constant, no need to specify the type
-                
+                let shape = RoundedRectangle(cornerRadius: ViewConstants.cornerRadius) 
                 if card.isFaceUp {
                     shape.fill().foregroundColor(.white)
                     shape.strokeBorder(lineWidth: ViewConstants.lineWidth)
@@ -45,7 +49,6 @@ struct CardView: View{
                     shape.fill()
                 }
             }
-            
         })
     }
     
@@ -55,7 +58,7 @@ struct CardView: View{
     
     // make constants in the code more readale + gathers them at one pace
     private struct ViewConstants {
-        static let cornerRadius: CGFloat = 23
+        static let cornerRadius: CGFloat = 10
         static let lineWidth: CGFloat = 4
         static let fontScale: CGFloat = 0.75
     }
